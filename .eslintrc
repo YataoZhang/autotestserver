@@ -1,0 +1,17 @@
+{
+  "extends": "eslint-config-egg",
+  "parserOptions": {
+      "ecmaVersion": 13
+  },
+  "root": true,
+  "rules": {
+      "indent": ["error", 4],
+      "comma-dangle": ["error", "never"],
+      "array-bracket-spacing": ["error", "never"],
+      "space-before-function-paren": ["error",  {
+        "anonymous": "always",
+        "named": "never"
+    }],
+    "arrow-parens": ["error", "always"]
+  }
+}

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title><%- title %></title>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/default.min.css"
+        />
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            html,
+            body {
+                width: 100%;
+                min-width: 1024px;
+                min-height: 100vh;
+            }
+            .container {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .nav-content {
+                padding: 10px 20px;
+                box-sizing: border-box;
+                font-size: 24px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                background-color: rgb(38, 38, 38);
+                color: #fff;
+            }
+            .header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                height: 140px;
+                align-items: center;
+                color: rgb(77, 77, 77);
+                background-color: rgb(245, 245, 245);
+                margin-bottom: 15px;
+            }
+            .lable-tag {
+                font-size: 20px;
+                margin: 0 10px;
+            }
+            .lable-value {
+                font-size: 45px;
+                font-weight: 900;
+            }
+
+            .lable-value:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+            .is-success {
+                color: rgb(43, 200, 144);
+            }
+            .is-failure {
+                color: #fc5531;
+            }
+            .camp-list {
+                display: flex;
+                padding: 10px;
+                box-sizing: border-box;
+                flex-direction: column;
+            }
+            .camp-list__item {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                border: 1px solid rgb(77, 77, 77);
+                border-radius: 15px;
+                margin-bottom: 15px;
+            }
+            .camp-list__item img {
+                width: 100%;
+            }
+            .camp-list__item--action {
+                height: 35px;
+                line-height: 35px;
+                font-size: 24px;
+                display: flex;
+                flex-direction: row;
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
+                color: #fff;
+                padding: 10px;
+            }
+            .camp-list__item--action.is-success {
+                background-color: rgb(43, 200, 144);
+            }
+            .camp-list__item--action.is-failure {
+                background-color: #fc5531;
+            }
+            .camp-list__item--action-rate {
+                margin: 0 30px;
+            }
+            .camp-list__item--content {
+                display: flex;
+                flex: 1 1 0;
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                box-sizing: border-box;
+                height: 350px;
+                justify-content: center;
+            }
+            .camp-list__item--content-vs {
+                font-size: 30px;
+                margin: 0 20px;
+            }
+            .camp-list__item--img {
+                padding: 15px;
+                height: 100%;
+                box-sizing: border-box;
+            }
+            .camp-list__item--img img {
+                object-fit: contain;
+                flex-shrink: 1;
+                width: 100%;
+                height: 100%;
+            }
+            .camp-code {
+                /* width: calc(100% - 25px); */
+                display: none;
+                padding: 10px;
+            }
+            .camp-code code {
+                box-sizing: border-box;
+            }
+            .camp-code-title button {
+                margin: 0 30px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="nav-content">
+            <div><label>Title:&nbsp;</label><%- title %></div>
+            <div><label>Time:&nbsp;</label><%- time %></div>
+        </nav>
+        <div class="container">
+            <header class="header">
+                <div>
+                    <label class="lable-tag">时长</label>
+                    <label class="lable-value"><%- duration %>s</label>
+                </div>
+                <div>
+                    <label class="lable-tag">实验组</label>
+                    <label class="lable-value"><%- group.list.length %></label>
+                </div>
+                <div>
+                    <label class="lable-tag">成功组</label>
+                    <label class="lable-value is-success"
+                        ><%- group.successes %></label
+                    >
+                </div>
+                <div>
+                    <label class="lable-tag">失败组</label>
+                    <label class="lable-value is-failure"
+                        ><%- group.failures %></label
+                    >
+                </div>
+                <div>
+                    <label class="lable-tag">阈值</label>
+                    <label class="lable-value"><%- threshold %></label>
+                </div>
+            </header>
+            <div class="camp-list">
+                <% for (let index = 0; index < group.list.length; index++) { %>
+                <% let item = group.list[index] %>
+                <div class="camp-list__item">
+                    <div
+                        class="camp-list__item--action <%- item.rate > threshold ? 'is-success' : 'is-failure' %>"
+                    >
+                        <div>
+                            状态：<label
+                                ><%- item.rate > threshold ? '成功' : '失败'
+                                %></label
+                            >
+                        </div>
+                        <div class="camp-list__item--action-rate">
+                            <label>差异值：</label><%- item.rate %>
+                        </div>
+                        <div>
+                            <label>动作名称：</label><%- item.action || '空' %>
+                        </div>
+                    </div>
+                    <div class="camp-list__item--content">
+                        <div class="camp-list__item--img">
+                            <img
+                                class="实验组"
+                                src="data:image/png;base64,<%= item.img1%>"
+                            />
+                        </div>
+                        <label class="camp-list__item--content-vs">VS</label>
+                        <div class="camp-list__item--img">
+                            <img
+                                class="对照组"
+                                src="data:image/png;base64,<%= item.img2%>"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+            <div class="camp-code">
+                <p class="camp-code-title">
+                    测试用例代码片段：<button>录制json代码</button
+                    ><button>测试用例代码</button>
+                </p>
+                <pre>
+                    <code class="language-json">
+                        {
+                            "title": "Recording 2023/10/20 at 11:09:02",
+                            "steps": [
+                                {
+                                    "type": "setViewport",
+                                    "width": 1440,
+                                    "height": 397,
+                                    "deviceScaleFactor": 1,
+                                    "isMobile": false,
+                                    "hasTouch": false,
+                                    "isLandscape": false
+                                },
+                                {
+                                    "type": "navigate",
+                                    "url": "https://pan.baidu.com/aipan/aitools",
+                                    "assertedEvents": [
+                                        {
+                                            "type": "navigation",
+                                            "url": "https://pan.baidu.com/aipan/aitools",
+                                            "title": "百度网盘AI工具箱"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "click",
+                                    "target": "main",
+                                    "selectors": [
+                                        [
+                                            "div.aiTools-aside > div:nth-of-type(4)"
+                                        ],
+                                        [
+                                            "xpath///*[@id=\"app\"]/div[2]/div[1]/div[1]/div[4]"
+                                        ],
+                                        [
+                                            "pierce/div.aiTools-aside > div:nth-of-type(4)"
+                                        ]
+                                    ],
+                                    "offsetY": 25,
+                                    "offsetX": 93
+                                },
+                                {
+                                    "type": "click",
+                                    "target": "main",
+                                    "selectors": [
+                                        [
+                                            "div.aiTools-aside > div:nth-of-type(1)"
+                                        ],
+                                        [
+                                            "xpath///*[@id=\"app\"]/div[2]/div[1]/div[1]/div[1]"
+                                        ],
+                                        [
+                                            "pierce/div.aiTools-aside > div:nth-of-type(1)"
+                                        ]
+                                    ],
+                                    "offsetY": 24,
+                                    "offsetX": 77
+                                }
+                            ]
+                        }
+                        
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </body>
+    <script>
+        hljs.highlightAll();
+    </script>
+</html>
