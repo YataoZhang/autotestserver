@@ -90,6 +90,7 @@ async function goAndRun(host, baseDir, taskid) {
  * @param {Object} options 参数
  */
 module.exports.invoke = async function (options) {
+    console.log(options);
     // {"host":"Http://asdf.com","cookies":"dsfsdfds","compareHost":"Http://asdf.com","enableCompare":true}
     const { planName, baseDir, taskid, info = {}, records = [] } = options;
 

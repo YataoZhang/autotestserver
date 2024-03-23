@@ -35,11 +35,13 @@ class InvokeService extends Service {
         //     failure: 0,
         //     page: 'asdjfhqwkej/reporter/coreCase_新百度网盘首页.html'
         //  }
-        const { status, data = {} } = await this.app.checkTestStatus(taskid);
+        const { status, data = null } = await this.app.checkTestStatus(taskid);
+
         if (status === 'completed' || status === 'failed') {
+            const isEmitError = status === 'failed' && data.errmsg;
             const options = {
                 where: {
-                    id: historyId,
+                    id: +historyId,
                     taskid,
                     status: 1
                 },
@@ -47,24 +49,27 @@ class InvokeService extends Service {
                     result: data,
                     end_at: new Date(),
                     status: status === 'completed' ? 2 : 3,
-                    reporter_link: '/public/' + data.report.html,
-                    detail_link: '/public/' + data.report.json,
-                    compare_link: data.detections.page
+                    reporter_link: isEmitError ? '' : ('/public/' + data.report.html),
+                    detail_link: isEmitError ? '' : ('/public/' + data.report.json),
+                    compare_link: isEmitError ? '' : (data.detections.page
                         ? ('/public/' + data.detections.page)
-                        : ''
+                        : '')
                 }
             };
-            await this.app.history.update(options).catch((ex) => {
+            await this.app.prisma.history.update(options).catch((ex) => {
                 this.ctx.logger.error(`history update failed, options is ${JSON.stringify(options)}} and error is ${ex.message}`);
             });
+            return true;
+        }
+        if (status === 'not_exists') {
             return true;
         }
         return false;
     }
     async start(historyId) {
-        const data = await this.app.prisma.history.findMany({
+        const data = await this.app.prisma.history.findFirst({
             where: {
-                id: historyId,
+                id: +historyId,
                 // 0 未开始测试 1 测试中 2 测试成功 3 测试失败
                 status: 0,
                 HistoriesOnCases: {
@@ -93,6 +98,9 @@ class InvokeService extends Service {
                 }
             }
         });
+        if (!data) {
+            throw new Error('cannot create or found this execute history of id:' + historyId);
+        }
 
         const planName = data.plan.name;
         const records = data.HistoriesOnCases.map((i) => {
@@ -108,7 +116,7 @@ class InvokeService extends Service {
 
         await this.app.prisma.history.update({
             where: {
-                id: historyId
+                id: +historyId
             },
             data: {
                 status: 1,

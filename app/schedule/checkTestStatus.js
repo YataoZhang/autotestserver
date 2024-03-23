@@ -4,9 +4,8 @@ class checkTestStatus extends Subscription {
 
     static get schedule() {
         return {
-            type: 'worker',
-            cron: '30 0 * * * *',
-            // interval: '1h',
+            interval: '30s', // 1 分钟间隔
+            type: 'all', // 指定所有的 worker 都需要执行
             immediate: true
         };
     }
@@ -18,7 +17,10 @@ class checkTestStatus extends Subscription {
         }
 
         const deleteList = [];
-        const checkings = list.map((id) => {
+        const checkings = list.map(async (id) => {
+            if (!id) {
+                return;
+            }
             const [historyId, taskId] = id.split(':');
             return this.ctx.service.invoke.checkStatus(historyId, taskId).then((canDelete) => {
                 if (canDelete) {
@@ -30,7 +32,7 @@ class checkTestStatus extends Subscription {
         await Promise.all(checkings);
         if (list.length && deleteList.length) {
             this.app.taskWaitingList = list.filter((i) => {
-                return !deleteList.includes(i);
+                return i && !deleteList.includes(i);
             });
         }
     }

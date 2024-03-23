@@ -19,6 +19,7 @@ module.exports = (agent) => {
     }
 
     function testGoGoGo(options) {
+        agent.logger.info('testGOGO:' + JSON.stringify(options));
         const promise = testAgent
             .invoke({
                 ...options,

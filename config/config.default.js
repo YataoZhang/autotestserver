@@ -17,7 +17,6 @@ module.exports = (appInfo) => {
     // add your middleware config here
     config.middleware = [];
 
-    console.log(appInfo.baseDir);
     // add your user config here
     const userConfig = {
         myAppName: 'autoTestServer',

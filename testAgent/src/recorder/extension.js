@@ -99,6 +99,7 @@ async function getStringifyExtensionClass(type) {
             const urlInfo = new nodeUrl.URL(url);
 
             return {
+                origin: urlInfo.origin,
                 fullURL: nodeUrl.format(urlInfo),
                 pathname: urlInfo.pathname,
                 pathnameWithQueryAndHash: urlInfo.pathname + urlInfo.search + urlInfo.hash
@@ -108,8 +109,8 @@ async function getStringifyExtensionClass(type) {
         async #appendNavigationStep(out, step) {
             const urlData = this.#appendFlowLevelFlag(step.url);
             const cookies = this.cookies || '';
-
-            out.appendLine(`cy.visit(${formatAsJSLiteral(urlData.pathnameWithQueryAndHash)}${cookies.length ? `, {
+            const url = formatAsJSLiteral((this.host || urlData.origin) + urlData.pathnameWithQueryAndHash);
+            out.appendLine(`cy.visit(${url}${cookies.length ? `, {
                 headers: {
                     Cookie: ${JSON.stringify(cookies)}
                 }
