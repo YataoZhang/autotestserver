@@ -4,7 +4,7 @@ class checkTestStatus extends Subscription {
 
     static get schedule() {
         return {
-            interval: '30s', // 1 分钟间隔
+            interval: '3s', // 3s间隔
             type: 'all', // 指定所有的 worker 都需要执行
             immediate: true
         };

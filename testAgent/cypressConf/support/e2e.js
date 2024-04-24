@@ -41,12 +41,12 @@ Cypress.on('test:after:run', (test, runnable) => {
     }
 
     if (
-        test.invocationDetails?.relativeFile.includes('inspect') &&
+        test.invocationDetails?.relativeFile.includes('spec') &&
         test.state === 'passed'
     ) {
-        const match = test.body.match(/cy\.screenshot\('([^']*)'\)/g);
+        const match = test.body.match(/cy\.screenshot\('([^']*)'/g);
         const matchList = match?.map((val) =>
-            val.replace(/cy\.screenshot\('|'\)/g, '')
+            val.replace(/cy\.screenshot\('|\'/g, '')
         );
         matchList?.forEach((match) => {
             let url = `/public/${getTaskId(

@@ -33,7 +33,7 @@ module.exports.prepareConfFile = async function (baseDir) {
 
 module.exports.getDefaultCypressOptions = function (host, project, taskid) {
     const dir = join(E2E_SPECS_DIR_NAME, taskid || '');
-    return {
+    const config = {
         spec: undefined,
         configFile: join(E2E_SPECS_DIR_NAME, cypressConfFile),
         headless: false,
@@ -61,11 +61,17 @@ module.exports.getDefaultCypressOptions = function (host, project, taskid) {
                 'Mozilla/5.0 uitestagent/1.0(NoGuide) Cypress/13.2.0 Chrome/114.0.5735.289 Electron/25.8.0 Safari/537.36',
             video: false,
             e2e: {
-                baseUrl: host,
+                // baseUrl: host,
                 specPattern: `${dir}/**/*.cy.{js,jsx,ts,tsx}`
             }
         }
     };
+
+    if (host) {
+        config.config.e2e.baseUrl = host;
+    }
+
+    return config;
 };
 
 module.exports.makeResultPage = async function (

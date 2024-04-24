@@ -44,7 +44,7 @@ async function getStringifyExtensionClass(type) {
     class StringifyExtension extends CypressStringifyExtension {
         constructor(options) {
             super();
-            this.user = options ? options.user : null;
+            // this.user = options ? options.user : null;
             this.cookies = options ? options.cookies : '';
             this.host = options ? options.host : '';
         }
@@ -66,7 +66,7 @@ async function getStringifyExtensionClass(type) {
             const title = flow.title.replace(/\//g, '');
 
             if (isAction) {
-                out.appendLine(`cy.screenshot('${group}-${title}-${++this.index}', {capture: "viewport"});`);
+                out.appendLine(`cy.screenshot('${group}-${title}-${this.index++}', {capture: "viewport"});`);
             }
 
             if (step.type === StepType.Navigate) {

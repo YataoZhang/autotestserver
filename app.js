@@ -10,11 +10,11 @@ class AppBootHook {
         this.taskIdsPath = path.join(this.app.baseDir, '.taskid');
     }
     async willReady() {
-        this.app.prisma = new client.PrismaClient({ log: ['query'] });
-        this.app.prisma.$on('query', (e) => {
-            console.log('Params: ' + e.params);
-            console.log('Duration: ' + e.duration + 'ms');
-        });
+        this.app.prisma = new client.PrismaClient();
+        // this.app.prisma.$on('query', (e) => {
+        //     console.log('Params: ' + e.params);
+        //     console.log('Duration: ' + e.duration + 'ms');
+        // });
         this.app.on('error', (err, ctx) => {
             ctx.logger.error(err);
         });

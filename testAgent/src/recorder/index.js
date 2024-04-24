@@ -21,7 +21,8 @@ async function stringifiedContent(recordingContent, type, options) {
  * @param {string} param2.filePath spec文件写入路径
  * @param {string} param2.type 是否为比较组
  * @param {Object} param2.info 额外信息
- * @param {Object} param2.info.user 用户信息
+ * @param {string?} param2.info.user 用户信息
+ * @param {boolean} param2.info.enableCompare 是否为比较组
  * @param {string} param2.info.cookies cookie信息
  * @param {string} param2.info.host 域名
  * @param {string} param2.info.compareHost 域名

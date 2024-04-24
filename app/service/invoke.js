@@ -36,9 +36,14 @@ class InvokeService extends Service {
         //     page: 'asdjfhqwkej/reporter/coreCase_新百度网盘首页.html'
         //  }
         const { status, data = null } = await this.app.checkTestStatus(taskid);
+        // console.log(status, data);
 
         if (status === 'completed' || status === 'failed') {
             const isEmitError = status === 'failed' && data.errmsg;
+            const isSuccessed = status === 'completed' && data.summary.every(({ stats }) => {
+                return stats.passes === stats.tests;
+            });
+            // console.log('isSuccessed', isSuccessed);
             const options = {
                 where: {
                     id: +historyId,
@@ -48,7 +53,7 @@ class InvokeService extends Service {
                 data: {
                     result: data,
                     end_at: new Date(),
-                    status: status === 'completed' ? 2 : 3,
+                    status: isSuccessed ? 2 : 3,
                     reporter_link: isEmitError ? '' : ('/public/' + data.report.html),
                     detail_link: isEmitError ? '' : ('/public/' + data.report.json),
                     compare_link: isEmitError ? '' : (data.detections.page
