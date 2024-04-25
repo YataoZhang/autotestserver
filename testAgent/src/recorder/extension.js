@@ -63,7 +63,7 @@ async function getStringifyExtensionClass(type) {
         async stringifyStep(out, step, flow) {
             const group = compareType ? (compareType === 'CONTROL_GROUP' ? 'cg' : 'eg') : '';
             const isAction = step.type !== StepType.Navigate && step.type !== StepType.SetViewport;
-            const title = flow.title.replace(/\//g, '');
+            const title = flow.title.replace(/\/|\s|:/g, '-');
 
             if (isAction) {
                 out.appendLine(`cy.screenshot('${group}-${title}-${this.index++}', {capture: "viewport"});`);
